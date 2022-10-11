@@ -1,13 +1,15 @@
-from Bot import Bot
+from BotWithObjFunc import BotWithObjFunc
 from GameAction import GameAction
 from GameState import GameState
 import random
 import numpy as np
 
-class RandomBot(Bot):
+class RandomBot(BotWithObjFunc):
     def get_action(self, state: GameState) -> GameAction:
         all_row_marked = np.all(state.row_status == 1)
         all_col_marked = np.all(state.col_status == 1)
+        
+        self._display_state(state)
 
         if not (all_row_marked or all_col_marked):
             return self.get_random_action(state)
