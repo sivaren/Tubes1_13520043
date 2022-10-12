@@ -4,11 +4,13 @@
 # Modified by GaIB 19 Assistants
 
 from tkinter import *
-import numpy as np
 from typing import Optional
-from Bot import Bot
-from GameState import GameState
 
+import numpy as np
+
+from Bot import Bot
+from BotWithObjFunc import BotWithObjFunc
+from GameState import GameState
 # * Import your bot
 from RandomBot import RandomBot
 
@@ -314,5 +316,5 @@ if __name__ == "__main__":
     PvB mode: game_instance = Dots_and_Boxes(None, BotName()) or game_instance = Dots_and_Boxes(BotName(), None)
     BvB mode: game_instance = Dots_and_Boxes(BotName(), BotName())
     """
-    game_instance = Dots_and_Boxes(None, RandomBot())
+    game_instance = Dots_and_Boxes(None, BotWithObjFunc())
     game_instance.mainloop()
