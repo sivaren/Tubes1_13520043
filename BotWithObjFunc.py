@@ -7,8 +7,8 @@ class BotWithObjFunc(Bot):
         self.__table_score = {
             0: 0,
             1: 5,
-            2: -10,
-            3: 20,
+            2: 10,
+            3: -20,
             4: 0,
         }
     

@@ -11,6 +11,7 @@ from GameState import GameState
 
 # * Import your bot
 from RandomBot import RandomBot
+from LocalSearchBot import LocalSearchBot
 
 size_of_board = 600
 number_of_dots = 4
@@ -315,4 +316,5 @@ if __name__ == "__main__":
     BvB mode: game_instance = Dots_and_Boxes(BotName(), BotName())
     """
     game_instance = Dots_and_Boxes(None, RandomBot())
+    # game_instance = Dots_and_Boxes(None, LocalSearchBot())
     game_instance.mainloop()
