@@ -1,5 +1,3 @@
-import sys
-
 from BotWithObjFunc import BotWithObjFunc
 from GameAction import GameAction
 from GameState import GameState
@@ -11,7 +9,7 @@ class BotMinimax(BotWithObjFunc):
         super().__init__()
     
     def get_action(self, state: GameState) -> GameAction:
-        return self.minimax(state, not state.player1_turn)
+        return self.minimax(state, True)
 
     def print_info(self, state: GameState):
         curr_score = self._calculate_objective_func(state)
@@ -23,81 +21,73 @@ class BotMinimax(BotWithObjFunc):
         print(f"PLAYER 1 TURN: {state.player1_turn}")
         print("=====================")
 
-
     def minimax(self, state: GameState, isMax: bool) -> GameAction:
-        print("MINIMAX")
-        actions = self.get_all_possible_action(state)
-        best_action = None
-        val = 0
-
+        # print("MINIMAX")
         if (isMax):
-            val = sys.maxsize * -1
-            for action in actions:
-                temp_val = self.minimum(state, 1)
-                if (val < temp_val):
-                    best_action = action
-                    val = temp_val
-
+            best_action, val = self.maximum(state, 3)
         else:
-            val = sys.maxsize
-            for action in actions:
-                temp_val = self.maximum(state, 1)
-                if (val > temp_val):
-                    best_action = action
-                    val = temp_val
+            best_action, val = self.minimum(state, 3)
         
-        print("Value:", val)
-        print("Best state tujuan:", StateManager.transform(state, best_action).board_status)
         return best_action
 
     
-    def minimum(self, state: GameState, depth: int) -> int:
-        print("MINIMUM CALLED WITH DEPTH", depth)
+    def minimum(self, state: GameState, depth: int):
+        best_action = None
+
+        if (depth == 0):
+            return best_action, self._calculate_objective_func(state)
+        
         actions = self.get_all_possible_action(state)
-
-        if (len(actions) == 0) or (depth == 0):
-            return self._calculate_objective_func(state)
-
-        val = sys.maxsize
-        minState = None
+        if (len(actions) == 0):
+            return best_action, self._calculate_objective_func(state)
+        
+        # base max value
+        val = 1000000
         for action in actions:
+            # create new state according to action
             newState = StateManager.transform(state, action)
-            
-            if (state.player1_turn == newState.player1_turn):
-                val = min(val, self.minimum(newState, depth - 1))
-                    
-            else:
-                val = min(val, self.maximum(newState, depth - 1))
 
-            if(val == self._calculate_objective_func(newState)):
-                minState = newState
-    
-        print("MINIMUM STATE:", minState.board_status)
-        print("MINIMUM VALUE:", val)
-        return val
+            temp_val = 0
+            if (state.player1_turn == newState.player1_turn):
+                # completing 1 block
+                temp_action, temp_val = self.minimum(newState, depth - 1)
+            else:
+                temp_action, temp_val = self.maximum(newState, depth - 1)
+
+            if (temp_val < val):
+                val = temp_val
+                best_action = action
+
+        # print("BEST VALUE: ", val)
+        return best_action, val
         
     
     def maximum(self, state: GameState, depth: int) -> int:
-        print("MAXIMUM CALLED WITH DEPTH", depth)
+        best_action = None
+
+        if (depth == 0):
+            return best_action, self._calculate_objective_func(state)
+        
         actions = self.get_all_possible_action(state)
-
-        if (len(actions) == 0) or (depth == 0):
-            return self._calculate_objective_func(state)
-
-        val = sys.maxsize * -1
-        maxState = None
+        if (len(actions) == 0):
+            return best_action, self._calculate_objective_func(state)
+        
+        # base min value
+        val = -1000000
         for action in actions:
+            # create new state according to action
             newState = StateManager.transform(state, action)
-            
+
+            temp_val = 0
             if (state.player1_turn == newState.player1_turn):
-                val = max(val, self.maximum(newState, depth - 1))
-                    
+                # completing 1 block
+                temp_action, temp_val = self.maximum(newState, depth - 1)
             else:
-                val = max(val, self.minimum(newState, depth - 1))
-            
-            if(val == self._calculate_objective_func(newState)):
-                maxState = newState
-    
-        print("MAXIMUM STATE:", maxState.board_status)
-        print("MAXIMUM VALUE:", val)
-        return val
+                temp_action, temp_val = self.minimum(newState, depth - 1)
+
+            if (temp_val > val):
+                val = temp_val
+                best_action = action
+        
+        # print("BEST VALUE: ", val)
+        return best_action, val
