@@ -8,10 +8,10 @@ class BotWithObjFunc(Bot):
         super().__init__()
         self.__table_score = {
             0: 0,
-            1: 5,
-            2: -10,
-            3: 20,
-            4: 0,
+            1: -5,
+            2: 10,
+            3: -20,
+            4: 100,
         }
     
     def __get_score(self, count_stick: int):

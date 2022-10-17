@@ -9,6 +9,7 @@ from typing import Optional
 import numpy as np
 
 from Bot import Bot
+from BotMinimax import BotMinimax
 from BotWithObjFunc import BotWithObjFunc
 from GameState import GameState
 # * Import your bot
@@ -316,5 +317,5 @@ if __name__ == "__main__":
     PvB mode: game_instance = Dots_and_Boxes(None, BotName()) or game_instance = Dots_and_Boxes(BotName(), None)
     BvB mode: game_instance = Dots_and_Boxes(BotName(), BotName())
     """
-    game_instance = Dots_and_Boxes(None, BotWithObjFunc())
+    game_instance = Dots_and_Boxes(None, BotMinimax())
     game_instance.mainloop()
