@@ -4,11 +4,15 @@
 # Modified by GaIB 19 Assistants
 
 from tkinter import *
-import numpy as np
 from typing import Optional
-from Bot import Bot
-from GameState import GameState
 
+import numpy as np
+
+from Bot import Bot
+from BotMinimax import BotMinimax
+from BotWithObjFunc import BotWithObjFunc
+from GameState import GameState
+from NewBot import NewBot
 # * Import your bot
 from RandomBot import RandomBot
 from LocalSearchBot import LocalSearchBot
@@ -315,6 +319,8 @@ if __name__ == "__main__":
     PvB mode: game_instance = Dots_and_Boxes(None, BotName()) or game_instance = Dots_and_Boxes(BotName(), None)
     BvB mode: game_instance = Dots_and_Boxes(BotName(), BotName())
     """
+
+    # game_instance = Dots_and_Boxes(None, BotMinimax())
     game_instance = Dots_and_Boxes(None, RandomBot())
     # game_instance = Dots_and_Boxes(None, LocalSearchBot())
     game_instance.mainloop()
