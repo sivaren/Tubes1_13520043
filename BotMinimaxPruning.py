@@ -4,7 +4,7 @@ from GameState import GameState
 from StateManager import StateManager
 
 
-class BotMinimax(BotWithObjFunc):
+class BotMinimaxPruning(BotWithObjFunc):
     def __init__(self) -> None:
         super().__init__()
     
@@ -23,16 +23,16 @@ class BotMinimax(BotWithObjFunc):
 
     def minimax(self, state: GameState, isMax: bool, pov_player1: bool) -> GameAction:
         # print("MINIMAX")
-        max_depth = 4
+        max_depth = 5
         if (isMax):
-            best_action, val = self.maximum(state, max_depth, pov_player1)
+            best_action, val = self.maximum(state, max_depth, -1000000, 1000000, pov_player1)
         else:
-            best_action, val = self.minimum(state, max_depth, pov_player1)
+            best_action, val = self.minimum(state, max_depth, -1000000, 1000000, pov_player1)
         
         return best_action
 
     
-    def minimum(self, state: GameState, depth: int, pov_player1: bool):
+    def minimum(self, state: GameState, depth: int, alpha: int, beta: int, pov_player1: bool):
         best_action = None
 
         if (depth == 0):
@@ -44,6 +44,7 @@ class BotMinimax(BotWithObjFunc):
         
         # base max value
         val = 1000000
+        best_state = None
         for action in actions:
             # create new state according to action
             newState = StateManager.transform(state, action)
@@ -51,19 +52,24 @@ class BotMinimax(BotWithObjFunc):
             temp_val = 0
             if (state.player1_turn == newState.player1_turn):
                 # completing 1 block
-                temp_action, temp_val = self.minimum(newState, depth - 1, pov_player1)
+                temp_action, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1)
             else:
-                temp_action, temp_val = self.maximum(newState, depth - 1, pov_player1)
+                temp_action, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1)
 
             if (temp_val < val):
                 val = temp_val
                 best_action = action
+            
+            # update beta value
+            beta = val if (val < beta) else beta
+            # pruning
+            if (beta <= alpha):
+                break
 
-        # print("BEST VALUE: ", val)
         return best_action, val
         
     
-    def maximum(self, state: GameState, depth: int, pov_player1: bool) -> int:
+    def maximum(self, state: GameState, depth: int, alpha: int, beta: int, pov_player1: bool) -> int:
         best_action = None
 
         if (depth == 0):
@@ -80,15 +86,21 @@ class BotMinimax(BotWithObjFunc):
             newState = StateManager.transform(state, action)
 
             temp_val = 0
+            temp_state = None
             if (state.player1_turn == newState.player1_turn):
                 # completing 1 block
-                temp_action, temp_val = self.maximum(newState, depth - 1, pov_player1)
+                temp_action, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1)
             else:
-                temp_action, temp_val = self.minimum(newState, depth - 1, pov_player1)
+                temp_action, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1)
 
             if (temp_val > val):
                 val = temp_val
                 best_action = action
+            
+            # update alpha value
+            alpha = val if (val > alpha) else alpha
+            # pruning
+            if (beta <= alpha):
+                break
         
-        # print("BEST VALUE: ", val)
         return best_action, val
