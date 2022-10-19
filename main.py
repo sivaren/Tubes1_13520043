@@ -9,13 +9,11 @@ from typing import Optional
 import numpy as np
 
 from Bot import Bot
-from BotMinimax import BotMinimax
-from BotMinimaxPruning import BotMinimaxPruning
-from BotWithObjFunc import BotWithObjFunc
 from GameState import GameState
 # * Import your bot
-from RandomBot import RandomBot
+from BotMinimaxPruning import BotMinimaxPruning
 from LocalSearchBot import LocalSearchBot
+from RandomBot import RandomBot
 
 size_of_board = 600
 number_of_dots = 4
@@ -321,6 +319,6 @@ if __name__ == "__main__":
     """
 
     # game_instance = Dots_and_Boxes(None, BotMinimax())
-    game_instance = Dots_and_Boxes(BotMinimaxPruning(), LocalSearchBot())
+    game_instance = Dots_and_Boxes(LocalSearchBot(), BotMinimaxPruning())
     # game_instance = Dots_and_Boxes(None, LocalSearchBot())
     game_instance.mainloop()

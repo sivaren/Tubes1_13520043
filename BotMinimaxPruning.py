@@ -3,6 +3,10 @@ from GameAction import GameAction
 from GameState import GameState
 from StateManager import StateManager
 import multiprocessing as mp
+import sys
+
+MAX_VAL = sys.maxsize
+MIN_VAL = -1 * MAX_VAL
 
 class BotMinimaxPruning(BotWithObjFunc):
     def __init__(self) -> None:
@@ -22,9 +26,9 @@ class BotMinimaxPruning(BotWithObjFunc):
     def minimax(self, state: GameState, isMax: bool, pov_player1: bool, rv: GameAction):
         max_depth = 5
         if (isMax):
-            best_action, val = self.maximum(state, max_depth, -1000000, 1000000, pov_player1, rv)
+            best_action, _ = self.maximum(state, max_depth, MIN_VAL, MAX_VAL, pov_player1, rv)
         else:
-            best_action, val = self.minimum(state, max_depth, -1000000, 1000000, pov_player1, rv)
+            best_action, _ = self.minimum(state, max_depth, MIN_VAL, MAX_VAL, pov_player1, rv)
         rv[0]= best_action
         return best_action
 
@@ -40,8 +44,7 @@ class BotMinimaxPruning(BotWithObjFunc):
             return best_action, self._calculate_objective_func(state, pov_player1)
         
         # base max value
-        val = 1000000
-        best_state = None
+        val = MAX_VAL
         rv[0]= actions[0]
         for action in actions:
             # create new state according to action
@@ -50,9 +53,9 @@ class BotMinimaxPruning(BotWithObjFunc):
             temp_val = 0
             if (state.player1_turn == newState.player1_turn):
                 # completing 1 block
-                temp_action, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1,rv)
+                _, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1,rv)
             else:
-                temp_action, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1,rv)
+                _, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1,rv)
 
             if (temp_val < val):
                 val = temp_val
@@ -78,19 +81,18 @@ class BotMinimaxPruning(BotWithObjFunc):
             return best_action, self._calculate_objective_func(state, pov_player1)
         
         # base min value
-        val = -1000000
+        val = MIN_VAL
         rv[0]= actions[0]
         for action in actions:
             # create new state according to action
             newState = StateManager.transform(state, action)
 
             temp_val = 0
-            temp_state = None
             if (state.player1_turn == newState.player1_turn):
                 # completing 1 block
-                temp_action, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1,rv)
+                _, temp_val = self.maximum(newState, depth - 1, alpha, beta, pov_player1,rv)
             else:
-                temp_action, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1,rv)
+                _, temp_val = self.minimum(newState, depth - 1, alpha, beta, pov_player1,rv)
 
             if (temp_val > val):
                 val = temp_val
