@@ -1,4 +1,5 @@
 import random
+import multiprocessing as mp
 from GameState import GameState
 from StateManager import StateManager
 from GameAction import GameAction
@@ -20,14 +21,12 @@ class LocalSearchBot(BotWithObjFunc):
 
     # print current information
     def print_info(self, state: GameState):
-        # action_idx = self.succ_score.index(max(self.succ_score))
-        # action = self.succ_table[action_idx]
         curr_score = self._calculate_objective_func(state)
         score_target = max(self.succ_score)
         
         print("SUCCESSORS")
         for i in range (len(self.succ_table)):
-            print(i + 1, self.succ_table[i]['action_type'], self.succ_table[i]['position'], self.succ_score[i])
+            print(i + 1, self.succ_table[i], self.succ_score[i])
         print("BOARD STATUS")
         print(state.board_status)
         print(f"CURRENT SCORE: {curr_score}")
@@ -44,10 +43,7 @@ class LocalSearchBot(BotWithObjFunc):
                     newState = StateManager.transform(state, action)
                     score = self._calculate_objective_func(newState)
 
-                    self.add_succ_table({
-                        'action_type': "row",
-                        'position': (j, i),
-                    })
+                    self.add_succ_table(action)
                     self.add_succ_score(score)
 
         for i in range (len(state.col_status)):
@@ -57,10 +53,7 @@ class LocalSearchBot(BotWithObjFunc):
                     newState = StateManager.transform(state, action)
                     score = self._calculate_objective_func(newState)
 
-                    self.add_succ_table({
-                        'action_type': "col",
-                        'position': (j, i),
-                    })
+                    self.add_succ_table(action)
                     self.add_succ_score(score)
     
     # select arbitrary neighbor from all highest-value successor occurences
@@ -74,21 +67,44 @@ class LocalSearchBot(BotWithObjFunc):
         neighbor_idx = random.choice(max_val_idx)
         
         return neighbor_idx
-
-    # make decision and get an action
-    def get_action(self, state: GameState) -> GameAction:
+    
+    # local search execution
+    def local_search(self, state: GameState):
         self.generate_successors(state)
         self.print_info(state)
-        
-        neighbor_idx = self.select_arbitrary_neighbor()
+
+        # placeholder - to use timeout
+        # retval[0] = self.succ_table[0]
+
         # use a line of code below to not randomize the neighbor
-        # action_idx = self.succ_score.index(max(self.succ_score))
-        action = self.succ_table[neighbor_idx]
-        action_type = action['action_type']
-        position = action['position']
+        # neighbor_idx = self.succ_score.index(max(self.succ_score))
+        neighbor_idx = self.select_arbitrary_neighbor()
+        best_action = self.succ_table[neighbor_idx]
+
+        # get the best action (compare w/ placeholder) - to use timeout
+        # if self.succ_score[neighbor_idx] >= self.succ_score[0]:
+        #     retval[0] = best_action
 
         # attributes clearance
         self.succ_table = []
         self.succ_score = []
 
-        return GameAction(action_type, position)
+        return best_action
+
+    # make decision and get an action
+    def get_action(self, state: GameState) -> GameAction:
+        # use code down below to include timeout (5 secs)
+        # mgr = mp.Manager()
+        # retval = mgr.dict()
+        # timeinst = mp.Process(target=self.local_search, args=(state, retval))
+        # timeinst.start()
+        # timeinst.join(5)
+        # if timeinst.is_alive():
+        #     timeinst.terminate()
+        #     timeinst.join()
+        
+        # return retval.values()[0]
+
+        best_action = self.local_search(state)
+
+        return best_action
