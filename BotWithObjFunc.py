@@ -16,14 +16,13 @@ class BotWithObjFunc(Bot):
     def __get_score(self, count_stick: int):
         return self.__table_score[count_stick]
 
-    def _calculate_objective_func(self, state: GameState, player1_pov: bool = None):
+    def _calculate_objective_func(self, state: GameState, player1_pov: bool):
         score = 0
         for i in range(len(state.board_status)):
             for j in range(len(state.board_status[i])):
                 abs_val = abs(state.board_status[i][j])
                 if (abs_val == 4):
-                    pov = player1_pov if player1_pov != None else state.player1_turn
-                    flip = (1 if pov else -1) * \
+                    flip = (1 if player1_pov else -1) * \
                         (1 if state.board_status[i][j] == -4 else -1)
                     score += 100 * flip
                 else:

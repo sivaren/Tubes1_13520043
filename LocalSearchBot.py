@@ -21,7 +21,7 @@ class LocalSearchBot(BotWithObjFunc):
 
     # print current information
     def print_info(self, state: GameState):
-        curr_score = self._calculate_objective_func(state)
+        curr_score = self._calculate_objective_func(state, state.player1_turn)
         score_target = max(self.succ_score)
         
         print("SUCCESSORS")
@@ -41,7 +41,7 @@ class LocalSearchBot(BotWithObjFunc):
                 if(state.row_status[i][j] == 0):
                     action = GameAction("row", (j, i))
                     newState = StateManager.transform(state, action)
-                    score = self._calculate_objective_func(newState)
+                    score = self._calculate_objective_func(newState, state.player1_turn)
 
                     self.add_succ_table(action)
                     self.add_succ_score(score)
@@ -51,7 +51,8 @@ class LocalSearchBot(BotWithObjFunc):
                 if(state.col_status[i][j] == 0):
                     action = GameAction("col", (j, i))
                     newState = StateManager.transform(state, action)
-                    score = self._calculate_objective_func(newState)
+                    score = self._calculate_objective_func(
+                        newState, state.player1_turn)
 
                     self.add_succ_table(action)
                     self.add_succ_score(score)
