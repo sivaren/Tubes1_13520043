@@ -19,18 +19,7 @@ class BotMinimaxPruning(BotWithObjFunc):
             timeinst.join()
         return rv.values()[0]
 
-    def print_info(self, state: GameState):
-        curr_score = self._calculate_objective_func(state)
-
-        print("=====================")
-        print("BOARD STATUS")
-        print(state.board_status)
-        print(f"CURRENT SCORE: {curr_score}")
-        print(f"PLAYER 1 TURN: {state.player1_turn}")
-        print("=====================")
-
     def minimax(self, state: GameState, isMax: bool, pov_player1: bool, rv: GameAction):
-        # print("MINIMAX")
         max_depth = 5
         if (isMax):
             best_action, val = self.maximum(state, max_depth, -1000000, 1000000, pov_player1, rv)

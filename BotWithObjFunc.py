@@ -30,20 +30,6 @@ class BotWithObjFunc(Bot):
 
         return score
 
-    def _display_state(self, state: GameState):        
-        score = self._calculate_objective_func(state)
-        
-        print("GAME STATE")
-        print("Board Status")
-        print(state.board_status)
-        print("Row Status")
-        print(state.row_status)
-        print("Col Status")
-        print(state.col_status)
-        print(f"Player 1 Turn: {state.player1_turn}")
-        print(f"Score: {score}")
-        print("=====================================")
-
     def get_all_possible_action(self, state: GameState) -> list:
         actions = []
         row_status = state.row_status

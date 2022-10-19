@@ -19,21 +19,6 @@ class LocalSearchBot(BotWithObjFunc):
     def add_succ_score(self, score: int):
         self.succ_score.append(score)
 
-    # print current information
-    def print_info(self, state: GameState):
-        curr_score = self._calculate_objective_func(state, state.player1_turn)
-        score_target = max(self.succ_score)
-        
-        print("SUCCESSORS")
-        for i in range (len(self.succ_table)):
-            print(i + 1, self.succ_table[i], self.succ_score[i])
-        print("BOARD STATUS")
-        print(state.board_status)
-        print(f"CURRENT SCORE: {curr_score}")
-        print(f"SCORE TARGET: {score_target}".upper())
-        print(f"PLAYER 1 TURN: {state.player1_turn}".upper())
-        print("=====================")
-
     # generate all successors
     def generate_successors(self, state: GameState, retval: GameAction):
         for i in range (len(state.row_status)):
@@ -75,7 +60,6 @@ class LocalSearchBot(BotWithObjFunc):
     # local search execution
     def local_search(self, state: GameState, retval: GameAction):
         self.generate_successors(state, retval)
-        self.print_info(state)
 
         # use a line of code below to not randomize the neighbor
         # neighbor_idx = self.succ_score.index(max(self.succ_score))
