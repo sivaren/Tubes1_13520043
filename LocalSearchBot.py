@@ -35,7 +35,7 @@ class LocalSearchBot(BotWithObjFunc):
         print("=====================")
 
     # generate all successors
-    def generate_successors(self, state: GameState):
+    def generate_successors(self, state: GameState, retval: GameAction):
         for i in range (len(state.row_status)):
             for j in range (len(state.row_status[i])):
                 if(state.row_status[i][j] == 0):
@@ -55,6 +55,9 @@ class LocalSearchBot(BotWithObjFunc):
 
                     self.add_succ_table(action)
                     self.add_succ_score(score)
+
+        # initiate return value
+        retval[0] = self.succ_table[0]
     
     # select arbitrary neighbor from all highest-value successor occurences
     def select_arbitrary_neighbor(self):
@@ -69,12 +72,9 @@ class LocalSearchBot(BotWithObjFunc):
         return neighbor_idx
     
     # local search execution
-    def local_search(self, state: GameState):
-        self.generate_successors(state)
+    def local_search(self, state: GameState, retval: GameAction):
+        self.generate_successors(state, retval)
         self.print_info(state)
-
-        # placeholder - to use timeout
-        # retval[0] = self.succ_table[0]
 
         # use a line of code below to not randomize the neighbor
         # neighbor_idx = self.succ_score.index(max(self.succ_score))
@@ -82,8 +82,8 @@ class LocalSearchBot(BotWithObjFunc):
         best_action = self.succ_table[neighbor_idx]
 
         # get the best action (compare w/ placeholder) - to use timeout
-        # if self.succ_score[neighbor_idx] >= self.succ_score[0]:
-        #     retval[0] = best_action
+        if self.succ_score[neighbor_idx] >= self.succ_score[0]:
+            retval[0] = best_action
 
         # attributes clearance
         self.succ_table = []
@@ -94,17 +94,13 @@ class LocalSearchBot(BotWithObjFunc):
     # make decision and get an action
     def get_action(self, state: GameState) -> GameAction:
         # use code down below to include timeout (5 secs)
-        # mgr = mp.Manager()
-        # retval = mgr.dict()
-        # timeinst = mp.Process(target=self.local_search, args=(state, retval))
-        # timeinst.start()
-        # timeinst.join(5)
-        # if timeinst.is_alive():
-        #     timeinst.terminate()
-        #     timeinst.join()
+        mgr = mp.Manager()
+        retval = mgr.dict()
+        timeinst = mp.Process(target=self.local_search, args=(state, retval))
+        timeinst.start()
+        timeinst.join(5)
+        if timeinst.is_alive():
+            timeinst.terminate()
+            timeinst.join()
         
-        # return retval.values()[0]
-
-        best_action = self.local_search(state)
-
-        return best_action
+        return retval.values()[0]
