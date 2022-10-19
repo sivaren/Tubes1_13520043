@@ -10,9 +10,9 @@ import numpy as np
 
 from Bot import Bot
 from BotMinimax import BotMinimax
+from BotMinimaxPruning import BotMinimaxPruning
 from BotWithObjFunc import BotWithObjFunc
 from GameState import GameState
-from NewBot import NewBot
 # * Import your bot
 from RandomBot import RandomBot
 from LocalSearchBot import LocalSearchBot
@@ -321,6 +321,6 @@ if __name__ == "__main__":
     """
 
     # game_instance = Dots_and_Boxes(None, BotMinimax())
-    game_instance = Dots_and_Boxes(None, RandomBot())
+    game_instance = Dots_and_Boxes(BotMinimaxPruning(), LocalSearchBot())
     # game_instance = Dots_and_Boxes(None, LocalSearchBot())
     game_instance.mainloop()
